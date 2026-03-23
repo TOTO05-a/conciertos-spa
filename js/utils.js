@@ -10,3 +10,7 @@ export const toast = (msg) => {
   document.body.appendChild(t)
   setTimeout(() => t.remove(), 2500)
 }
+
+export const logAction = (msg) => {
+  console.log("📌 ACCION:", msg)
+}

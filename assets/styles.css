@@ -1,0 +1,35 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Animaciones */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: scale(1.05);
+}
+
+/* Scroll bonito */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 10px;
+}
+
+/* Inputs */
+input, select, textarea {
+  border-radius: 6px;
+}
+
+/* Botones */
+button {
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}

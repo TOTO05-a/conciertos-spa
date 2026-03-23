@@ -42,25 +42,28 @@ export const Home = () => {
   })
 
   return `
-  <h1 class="text-2xl mb-4">Eventos</h1>
+<h1 class="text-3xl font-bold mb-4">🎤 Eventos Disponibles</h1>
 
-  <input id="search" placeholder="Buscar..." class="text-black p-2 mb-2 w-full">
+<input id="search" placeholder="Buscar eventos..."
+  class="text-black p-3 mb-3 w-full rounded shadow">
 
-  <div class="flex gap-2 mb-4">
-    <select id="cityFilter" class="text-black p-2">
-      <option value="">Ciudad</option>
-      <option>Bogota</option>
-      <option>Medellin</option>
-      <option>Barranquilla</option>
-      <option>Bucaramanga</option>
-    </select>
+<div class="flex gap-3 mb-5 flex-wrap">
 
-    <select id="catFilter" class="text-black p-2">
-      <option value="">Categoria</option>
-      ${state.categories.map(c => `<option>${c.name}</option>`).join('')}
-    </select>
-  </div>
+  <select id="cityFilter" class="text-black p-2 rounded">
+    <option value="">Ciudad</option>
+    <option>Bogota</option>
+    <option>Medellin</option>
+    <option>Barranquilla</option>
+    <option>Bucaramanga</option>
+  </select>
 
-  <div id="list" class="grid md:grid-cols-3 gap-4"></div>
-  `
-}
+  <select id="catFilter" class="text-black p-2 rounded">
+    <option value="">Categoria</option>
+    ${state.categories.map(c => `<option>${c.name}</option>`).join('')}
+  </select>
+
+</div>
+
+<div id="list" class="grid md:grid-cols-3 gap-6"></div>
+`
+} 
