@@ -1,19 +1,403 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PulseX Events</title>
-<link rel="icon" href="favicon.png">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../assets/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conciertos Conectados</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Estilos de la aplicación -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-950 text-white">
+<body>
 
-<app-navbar></app-navbar>
-<div id="app" class="p-4"></div>
-<app-modal></app-modal>
+<!-- ═══════════════════════════════════════════════════════
+     CONTENEDOR DE NOTIFICACIONES (TOASTS)
+═══════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
 
-<script type="module" src="./js/app.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════
+     PÁGINA: LOGIN (Administrador)
+═══════════════════════════════════════════════════════ -->
+<div id="page-login">
+
+  <a class="back-client-btn" onclick="showPage('client')">
+    ← Ver Eventos
+  </a>
+
+  <div class="login-box">
+    <span class="login-logo">Conciertos Conectados</span>
+    <p class="login-subtitle">Panel de Administración</p>
+    <h2>Iniciar Sesión</h2>
+
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input id="login-email" type="email" class="input"
+             placeholder="admin@mail.com" value="admin@mail.com">
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input id="login-pass" type="password" class="input"
+             placeholder="••••••" value="123456">
+    </div>
+
+    <button class="btn btn-primary w-full mt-3"
+            onclick="doLogin()" style="justify-content:center;">
+      Ingresar al Panel
+    </button>
+
+    <div class="login-note">
+      🔐 Demo: <strong>admin@mail.com</strong> / <strong>123456</strong>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PÁGINA: ADMIN
+═══════════════════════════════════════════════════════ -->
+<div id="page-admin" class="hidden">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      🎵 CC Admin
+      <span>Conciertos Conectados</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="adminNav('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item" onclick="adminNav('categories')" id="nav-categories">
+        <span class="nav-icon">🏷️</span><span>Categorías</span>
+      </div>
+      <div class="nav-item" onclick="adminNav('events')" id="nav-events">
+        <span class="nav-icon">🎤</span><span>Eventos</span>
+      </div>
+      <div class="nav-item" onclick="adminNav('sales')" id="nav-sales">
+        <span class="nav-icon">💰</span><span>Ventas</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="doLogout()">
+        <span class="nav-icon">🚪</span><span>Salir</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <div id="admin-dashboard">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Resumen general de la plataforma</p>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
+    <div id="admin-categories" class="hidden">
+      <div class="page-header">
+        <h1>Categorías</h1>
+        <p>Gestiona las categorías de eventos</p>
+      </div>
+      <div class="header-row">
+        <span id="cat-count" class="text-muted text-sm"></span>
+        <button class="btn btn-primary" onclick="openCatModal()">+ Agregar Categoría</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
+          <tbody id="cat-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-events" class="hidden">
+      <div class="page-header">
+        <h1>Eventos</h1>
+        <p>Gestiona los conciertos y eventos</p>
+      </div>
+      <div class="header-row">
+        <span id="ev-count" class="text-muted text-sm"></span>
+        <button class="btn btn-primary" onclick="openEvModal()">+ Crear Evento</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th><th>Evento</th><th>Categoría</th>
+              <th>Ciudad</th><th>Fecha</th><th>Precio</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="ev-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-sales" class="hidden">
+      <div class="page-header">
+        <h1>Ventas</h1>
+        <p>Historial de compras realizadas</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Boleta</th><th>Fecha</th><th>Ciudad</th>
+              <th>Cliente</th><th>Total</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="sales-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PÁGINA: CLIENTES
+═══════════════════════════════════════════════════════ -->
+<div id="page-client" class="hidden">
+
+  <header class="client-header">
+    <div class="client-logo">🎵 Conciertos Conectados</div>
+    <div class="client-header-right">
+      <button class="btn btn-secondary btn-sm" onclick="showPage('login')">Admin</button>
+      <button class="cart-btn" onclick="openCart()">
+        🛒 Carrito
+        <span class="cart-badge" id="cart-badge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Vive la música<br><span>en Guatemala</span></h1>
+    <p>Descubre los mejores conciertos y eventos en todo el país. Compra tus entradas fácil y rápido.</p>
+  </section>
+
+  <div class="filters-bar">
+    <div class="search-input-wrap">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input id="search-input" class="input"
+             placeholder="Buscar eventos..." oninput="filterEvents()">
+    </div>
+    <select id="filter-city" class="input filter-select" onchange="filterEvents()">
+      <option value="">Todas las ciudades</option>
+      <option>Guatemala</option>
+      <option>Quetzaltenango</option>
+      <option>Escuintla</option>
+      <option>Antigua</option>
+    </select>
+    <select id="filter-cat" class="input filter-select" onchange="filterEvents()">
+      <option value="">Todas las categorías</option>
+    </select>
+  </div>
+
+  <section class="events-section">
+    <div class="header-row" style="margin-bottom:0">
+      <div class="section-title">Eventos disponibles</div>
+    </div>
+    <p id="results-count" class="results-count"></p>
+    <div id="events-grid" class="events-grid"></div>
+  </section>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PÁGINA: DETALLE DEL EVENTO
+═══════════════════════════════════════════════════════ -->
+<div id="page-detail" class="hidden">
+
+  <header class="client-header">
+    <div class="client-logo">🎵 Conciertos Conectados</div>
+    <div class="client-header-right">
+      <button class="cart-btn" onclick="openCart()">
+        🛒 Carrito
+        <span class="cart-badge" id="cart-badge-detail">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="detail-header">
+    <button class="btn btn-secondary btn-sm" onclick="showPage('client')">← Volver al inicio</button>
+  </div>
+
+  <div class="detail-content" id="detail-content"></div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     MODALES
+═══════════════════════════════════════════════════════ -->
+
+<!-- Modal Categoría -->
+<div id="modal-cat" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="cat-modal-title">Nueva Categoría</span>
+      <button class="close-btn" onclick="closeModal('modal-cat')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cat-edit-id">
+      <div class="form-group">
+        <label>Nombre de la categoría</label>
+        <input id="cat-name" class="input" placeholder="Ej: Rock, Pop, Electrónica...">
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="cat-desc" class="input" rows="3"
+                  placeholder="Breve descripción de la categoría..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-cat')">Cancelar</button>
+      <button class="btn btn-primary"   onclick="saveCat()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Evento -->
+<div id="modal-ev" class="modal-overlay hidden">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="ev-modal-title">Nuevo Evento</span>
+      <button class="close-btn" onclick="closeModal('modal-ev')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ev-edit-id">
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Código</label>
+          <input id="ev-code" class="input" placeholder="EV-001">
+        </div>
+        <div class="form-group">
+          <label>Nombre del evento</label>
+          <input id="ev-name" class="input" placeholder="Nombre del concierto">
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="ev-cat" class="input"><option value="">Seleccionar...</option></select>
+        </div>
+        <div class="form-group">
+          <label>Ciudad</label>
+          <select id="ev-city" class="input">
+            <option value="">Seleccionar...</option>
+            <option>Guatemala</option>
+            <option>Quetzaltenango</option>
+            <option>Escuintla</option>
+            <option>Antigua</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Precio (GTQ)</label>
+          <input id="ev-price" class="input" type="number" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input id="ev-date" class="input" type="date">
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input id="ev-time" class="input" type="time">
+        </div>
+        <div class="form-group">
+          <label>URL de imagen</label>
+          <input id="ev-img" class="input" placeholder="https://...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="ev-desc" class="input" rows="3"
+                  placeholder="Descripción del evento..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ev')">Cancelar</button>
+      <button class="btn btn-primary"   onclick="saveEv()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Carrito -->
+<div id="modal-cart" class="modal-overlay hidden">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">🛒 Carrito de Compras</span>
+      <button class="close-btn" onclick="closeModal('modal-cart')">✕</button>
+    </div>
+    <div class="modal-body"   id="cart-body"></div>
+    <div class="modal-footer" id="cart-footer"></div>
+  </div>
+</div>
+
+<!-- Modal Checkout -->
+<div id="modal-checkout" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Datos del Comprador</span>
+      <button class="close-btn" onclick="closeModal('modal-checkout')">✕</button>
+    </div>
+    <div class="modal-body" id="checkout-body">
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Número de identificación</label>
+          <input id="ch-id"    class="input" placeholder="DPI / Pasaporte">
+        </div>
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input id="ch-name"  class="input" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input id="ch-phone" class="input" placeholder="+502...">
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input id="ch-email" class="input" type="email" placeholder="correo@ejemplo.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Dirección</label>
+        <input id="ch-address" class="input" placeholder="Tu dirección">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-checkout')">Cancelar</button>
+      <button class="btn btn-success"   onclick="doCheckout()">✓ Confirmar Compra</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalle de Venta -->
+<div id="modal-sale-detail" class="modal-overlay hidden">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Detalle de Venta</span>
+      <button class="close-btn" onclick="closeModal('modal-sale-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="sale-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-sale-detail')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS  (orden importante: components → app)
+═══════════════════════════════════════════════════════ -->
+<script src="components.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
