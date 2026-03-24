@@ -1,15 +1,23 @@
 export const EventCard = (e) => `
-<div class="bg-gray-800 p-3 rounded hover:scale-105 transition">
-  <img src="${e.image}" class="h-40 w-full object-cover">
-  <h2 class="text-lg">${e.name}</h2>
-  <p>${e.city}</p>
-  <p>${e.date} - ${e.time}</p>
-  <p class="font-bold">$${e.price}</p>
+<div class="bg-gray-900 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition duration-300">
 
-  <a href="#/event/${e.id}" class="text-blue-400 block">Ver</a>
+  <img src="${e.image}" class="h-48 w-full object-cover">
 
-  <button data-id="${e.id}" class="buy bg-green-600 mt-2 px-2 py-1 w-full">
-    Agregar
-  </button>
+  <div class="p-4 space-y-2">
+    <h2 class="text-lg font-bold">${e.name}</h2>
+    <p class="text-sm text-gray-400">${e.city}</p>
+    <p class="text-sm">${e.date} • ${e.time}</p>
+
+    <p class="text-green-400 font-bold text-lg">$${e.price}</p>
+
+    <div class="flex justify-between items-center mt-2">
+      <a href="#/event/${e.id}" class="text-blue-400 hover:underline">Ver</a>
+
+      <button data-id="${e.id}" 
+        class="buy bg-green-600 px-3 py-1 rounded hover:bg-green-700">
+        Agregar
+      </button>
+    </div>
+  </div>
 </div>
 `
