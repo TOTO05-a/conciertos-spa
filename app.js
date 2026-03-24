@@ -43,7 +43,7 @@ function seedData() {
       name: 'Rock Fest Guatemala 2025',
       catId: 'c1', price: 250,
       date: '2025-08-15', time: '19:00', city: 'Guatemala',
-      img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80',
+      img: 'https://www.bing.com/images/search?view=detailV2&ccid=ZIB%2bPX4E&id=81A1D1621FCA658DDE816752C854F5B67981A6E9&thid=OIP.ZIB-PX4Eo9LU1WnS7c0glAHaEK&mediaurl=https%3a%2f%2fwallpaperaccess.com%2ffull%2f6168831.png&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.64807e3d7e04a3d2d4d569d2edcd2094%3frik%3d6aaBebb1VMhSZw%26pid%3dImgRaw%26r%3d0&exph=1080&expw=1920&q=Metallica+Wallpaper+4K+PC&FORM=IRPRST&ck=419EFE2C16B0C7FFC48D8B46C782B6BB&selectedIndex=0&itb=0',
       desc: 'El festival de rock más grande de Guatemala con las mejores bandas nacionales e internacionales.'
     },
     {
@@ -143,7 +143,7 @@ function showPage(p) {
   PAGES.forEach(pg =>
     document.getElementById('page-' + pg).classList.toggle('hidden', pg !== p)
   );
-  if (p === 'client') { renderClientEvents(); renderClientFilters(); }
+  if (p === 'client') { ShowEvents(); renderClientFilters(); }
   if (p === 'admin')  { adminNav('dashboard'); }
 }
 
@@ -528,7 +528,7 @@ function filterEvents() {
   renderEventCards(events);
 }
 
-function renderClientEvents() {
+function ShowEvents() {
   renderEventCards(getEvents());
 }
 
@@ -806,8 +806,7 @@ function showSuccessModal(sale) {
       <div class="success-title">¡Compra Realizada con Éxito!</div>
       <p class="text-muted">Tu boleta ha sido asignada. ¡Disfruta el evento!</p>
       <div class="success-ticket">
-        <div class="text-xs text-muted" style="margin-bottom:6px">NÚMERO DE BOLETA</div>
-        <div class="ticket-id">${sale.ticketId}</div>
+ 
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
           <div class="text-sm"><span class="text-muted">Cliente:</span> ${sale.client.name}</div>
           <div class="text-sm"><span class="text-muted">Entradas:</span> ${sale.items.reduce((a, i) => a + i.qty, 0)}</div>
@@ -834,7 +833,7 @@ seedData();
 updateCartBadge();
 showPage('client');
 renderClientFilters();
-renderClientEvents();
+ShowEvents();
 
 // Enter key en el login
 document.getElementById('login-pass').addEventListener('keydown', e => {
