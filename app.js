@@ -168,6 +168,7 @@ function doLogout() {
   toast('Sesión cerrada', 'info');
 }
 
+modal
 
 /* ═══════════════════════════════════════════════════════
    8. NAVEGACIÓN DEL PANEL ADMIN
@@ -339,6 +340,7 @@ function renderEvents() {
   }).join('');
 }
 
+
 function openEvModal(id = null) {
   const cats = getCats();
   const sel  = document.getElementById('ev-cat');
@@ -500,9 +502,7 @@ function openSaleDetail(id) {
     </div>`;
 
   openModal('modal-sale-detail');
-}
-
-
+} 
 /* ═══════════════════════════════════════════════════════
    13. VISTA CLIENTE — FILTROS Y EVENTOS
 ═══════════════════════════════════════════════════════ */
@@ -548,6 +548,7 @@ function renderEventCards(events) {
     return;
   }
 
+  // //
   grid.innerHTML = '';
   events.forEach(ev => {
     const card = document.createElement('event-card-wc');
@@ -706,6 +707,7 @@ function changeQty(id, delta) {
 
   cart[idx].qty = Math.max(0, cart[idx].qty + delta);
   if (cart[idx].qty === 0) cart.splice(idx, 1);
+/*muestra el modal con el formulario */
 
   setCart(cart);
   renderCart();
@@ -717,6 +719,8 @@ function removeFromCart(id) {
   toast('Entrada eliminada del carrito', 'warn');
   renderCart();
 }
+
+
 
 
 /* ═══════════════════════════════════════════════════════
@@ -759,6 +763,7 @@ function openCheckout() {
 
   openModal('modal-checkout');
 }
+
 
 /** Procesa la compra y guarda la venta */
 function doCheckout() {
@@ -827,9 +832,9 @@ function showSuccessModal(sale) {
 }
 
 
-/* ═══════════════════════════════════════════════════════
-   17. INICIALIZACIÓN
-═══════════════════════════════════════════════════════ */
+// /* ═══════════════════════════════════════════════════════
+//    17. INICIALIZACIÓN
+// ═══════════════════════════════════════════════════════ */
 seedData();
 updateCartBadge();
 showPage('client');
@@ -840,3 +845,125 @@ renderClientEvents();
 document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
+
+
+
+/* ═══════════════════════════════════════════════════════
+   15. modal sugerencias
+═══════════════════════════════════════════════════════ */
+function saveSuggestion() {
+  const suggestionForm = document.getElementById('suggestion-form');
+  const formData = new FormData(suggestionForm);
+  const suggestion = {
+    name: formData.get('suggestion-name'),
+    email: formData.get('suggestion-email'),
+    suggestion: formData.get('suggestion-suggestion'),
+  };
+
+  localStorage.setItem('suggestion', JSON.stringify(suggestion));
+  suggestionForm.reset();
+  const modal = document.getElementById('modal-suggestion');
+  const modalInstance = bootstrap.Modal.getInstance(modal);
+  modalInstance.hide();
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   15. modal sugerencias
+═══════════════════════════════════════════════════════ */
+function saveSuggestion() {
+  const suggestionForm = document.getElementById('suggestion-form');
+  const formData = new FormData(suggestionForm);
+  const suggestion = {
+    name: formData.get('suggestion-name'),
+    email: formData.get('suggestion-email'),
+    suggestion: formData.get('suggestion-suggestion'),
+  };
+
+  localStorage.setItem('suggestion', JSON.stringify(suggestion));
+  suggestionForm.reset();
+  const modal = document.getElementById('modal-suggestion');
+  const modalInstance = bootstrap.Modal.getInstance(modal);
+  modalInstance.hide();
+}
+
+
+
+
+function moduleCities() {
+  const cities = getCities();
+  const tbody = document.getElementById('cities-tbody');
+
+  if (!cities.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="4">
+        <div class="empty-state">
+          <div class="empty-icon">🏷️</div>
+          <div class="empty-title">Sin Ciudades</div>
+          <p>Las ciudades se mostrarán aquí</p>
+        </div>
+      </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = cities.map(c => `
+    <tr>
+      <td>${c.code}</td>
+      <td>${c.name}</td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="openCityEdit('${c.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCity('${c.id}')">Eliminar</button>
+      </td>
+    </tr>
+  `).join('');
+
+  openModal('modal-city');
+}
+
+function openCityEdit(id) {
+  const city = getCities().find(c => c.id === id);
+  if (!city) return;
+
+  document.getElementById('city-edit-id').value = id;
+  document.getElementById('city-edit-code').value = city.code;
+  document.getElementById('city-edit-name').value = city.name;
+
+  openModal('modal-city-edit');
+}
+
+function deleteCity(id) {
+  if (!confirm('¿Eliminar esta ciudad?')) return;
+  setCities(getCities().filter(c => c.id !== id));
+  toast('Ciudad eliminada', 'warn');
+  renderCities();
+}
+
+function renderCity() {
+  const cities = getCities();
+  const tbody = document.getElementById('cities-tbody');
+
+  if (!cities.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="4">
+        <div class="empty-state">
+          <div class="empty-icon">🏷️</div>
+          <div class="empty-title">No hay ciudades registradas en el sistema</div>
+          <p>Las ciudades se mostrarán aquí</p>
+        </div>
+      </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = cities.map(c => `
+    <tr>
+      <td>${c.code}</td>
+      <td>${c.name}</td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="openCityEdit('${c.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCity('${c.id}')">Eliminar</button> 
+      </td>
+    </tr>
+  `).join('');
+}
+
+

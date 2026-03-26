@@ -19,6 +19,8 @@
 <div id="toast-container"></div>
 
 
+
+
 <!-- ═══════════════════════════════════════════════════════
      PÁGINA: LOGIN (Administrador)
 ═══════════════════════════════════════════════════════ -->
@@ -32,7 +34,7 @@
     <span class="login-logo">Conciertos Conectados</span>
     <p class="login-subtitle">Panel de Administración</p>
     <h2>Iniciar Sesión</h2>
-
+    
     <div class="form-group">
       <label>Correo electrónico</label>
       <input id="login-email" type="email" class="input"
@@ -54,15 +56,50 @@
       🔐 Demo: <strong>admin@mail.com</strong> / <strong>123456</strong>
     </div>
   </div>
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL: REGISTRO DE CIUDADES
+═══════════════════════════════════════════════════════════ -->
+<div id="modal-city-edit" class="modal hidden">
+  <div class="modal-content">
+    <h2>Editar Ciudad</h2>
 
+    <form id="city-edit-form">
+      <input id="city-edit-id" type="hidden">
+      <div class="form-group">
+        <label>Código</label>
+        <input id="city-edit-code" type="text" class="input"
+               placeholder="GU001" required>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre</label>
+        <input id="city-edit-name" type="text" class="input"
+               placeholder="Ciudad de Guatemala" required>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-primary w-full mt-3" type="submit">
+          Editar
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
+<!-- ═════════════════════════════════════════════════════════
+     LISTA DE CIUDADES
+═══════════════════════════════════════════════════════════ -->
+
+</div>
+<!-- ciudades debe venir de  -->
 
 <!-- ═══════════════════════════════════════════════════════
      PÁGINA: ADMIN
 ═══════════════════════════════════════════════════════ -->
-<div id="page-admin" class="hidden">
 
+<p></p>
+<div id="page-admin" class="hidden">
+  <p></p>
   <aside class="sidebar">
     <div class="sidebar-logo">
       🎵 CC Admin
@@ -81,6 +118,60 @@
       <div class="nav-item" onclick="adminNav('sales')" id="nav-sales">
         <span class="nav-icon">💰</span><span>Ventas</span>
       </div>
+      <!-- Link para desplegar el modal de sugerencia -->
+<!-- <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-suggestion">Enviar Sugerencia</a> -->
+
+<div id="module-cities" class="hidden">
+  <h2>Ciudades</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="cities-tbody"></tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-primary mt-3" onclick="moduleCities()">
+    Mostrar Ciudades
+  </button>
+
+<script>
+  function moduleCities() {
+    const cities = getCities();
+    const tbody = document.getElementById('cities-tbody');
+
+    if (!cities.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="4">
+          <div class="empty-state">
+            <div class="empty-icon">🏷️</div>
+            <div class="empty-title">Sin Ciudades</div>
+            <p>Las ciudades se mostrarán aquí</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = cities.map(c => `
+      <tr>
+        <td>${c.code}</td>
+        <td>${c.name}</td>
+        <td>
+          <button class="btn btn-primary btn-sm" onclick="openCityEdit('${c.id}')">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCity('${c.id}')">Eliminar</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+</script>
+
+
+      
     </nav>
     <div class="sidebar-footer">
       <div class="nav-item" onclick="doLogout()">
@@ -90,6 +181,9 @@
   </aside>
 
   <main class="admin-main">
+
+  
+
 
     <div id="admin-dashboard">
       <div class="page-header">
@@ -113,6 +207,52 @@
           <thead><tr><th>#</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
           <tbody id="cat-tbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <div id="page-cities" class="hidden">
+      <h2>Ciudades</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="cities-tbody"></tbody>
+        </table>
+      </div>
+    
+      <button class= "btn btn-primary" onclick="showModal('city')">
+        Agregar Ciudad
+      </button>
+    
+      <div id="modal-city" class="modal hidden">
+        <div class="modal-content">
+          <h2>Registrar Ciudad</h2>
+    
+          <form id="city-form">
+            <div class="form-group">
+              <label>Código</label>
+              <input id="city-code" type="text" class="input"
+                     placeholder="GU001" required>
+            </div>
+    
+            <div class="form-group">
+              <label>Nombre</label>
+              <input id="city-name" type="text" class="input"
+                     placeholder="Ciudad de Guatemala" required>
+            </div>
+    
+            <div class="form-group">
+              <button class="btn btn-primary w-full mt-3" type="submit">
+                Agregar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -158,6 +298,8 @@
 
   </main>
 </div>
+
+
 
 
 <!-- ═══════════════════════════════════════════════════════
@@ -234,6 +376,10 @@
   <div class="detail-content" id="detail-content"></div>
 
 </div>
+
+
+
+
 
 
 <!-- ═══════════════════════════════════════════════════════
@@ -378,6 +524,10 @@
   </div>
 </div>
 
+<p></p>
+
+
+
 <!-- Modal Detalle de Venta -->
 <div id="modal-sale-detail" class="modal-overlay hidden">
   <div class="modal modal-lg">
@@ -391,6 +541,41 @@
     </div>
   </div>
 </div>
+
+
+<!-- Modal de Sugerencia -->
+<!-- <div class="modal fade" id="modal-suggestion" tabindex="-1" aria-labelledby="modal-suggestion-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-suggestion-label">Enviar Sugerencia</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="suggestion-form">
+          <div class="form-group">
+            <label for="suggestion-name">Nombre</label>
+            <input type="text" class="form-control" id="suggestion-name" required>
+          </div>
+          <div class="form-group">
+            <label for="suggestion-email">Correo Electrónico</label>
+            <input type="email" class="form-control" id="suggestion-email" required>
+          </div>
+          <div class="form-group">
+            <label for="suggestion-suggestion">Sugerencia</label>
+            <textarea class="form-control" id="suggestion-suggestion" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="saveSuggestion()">Enviar</button>
+      </div>
+    </div>
+  </div> -->
+
+
+
 
 
 <!-- ═══════════════════════════════════════════════════════
