@@ -168,7 +168,6 @@ function doLogout() {
   toast('Sesión cerrada', 'info');
 }
 
-modal
 
 /* ═══════════════════════════════════════════════════════
    8. NAVEGACIÓN DEL PANEL ADMIN
